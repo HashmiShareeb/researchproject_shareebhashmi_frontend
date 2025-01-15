@@ -3,13 +3,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, type PropType } from "vue";
+import { ref, onMounted, type PropType, type Ref } from "vue";
 import "mapbox-gl/dist/mapbox-gl.css"; // Zeker niet vergeten!
 import mapboxgl from "mapbox-gl";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
-const mapElement = ref<HTMLElement | null>(null);
+const mapElement = ref<HTMLElement | null>(null) as Ref<HTMLElement | null>;
 
 onMounted(() => {
   const map = new mapboxgl.Map({
