@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import AppHeader from "./components/AppHeader.vue";
+import AppHeader from "./components/generic/AppHeader.vue";
 </script>
 
 <template>
-  <div class="dark:bg-gray-800 flex flex-col bg-white min-h-screen">
-    <div class="maw-w-screen-xl mx-auto">
-      <AppHeader />
+  <div class="dark:bg-gray-800 flex bg-white min-h-screen">
+    <AppHeader />
+
+    <!-- Main content -->
+    <div class="flex-grow min-h-screen px-4 py-8">
       <RouterView />
+      <!-- Displays the current route's component -->
     </div>
   </div>
 </template>
