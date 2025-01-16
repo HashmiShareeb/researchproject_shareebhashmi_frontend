@@ -24,7 +24,7 @@ const togglePanel = () => {
     ]"
   >
     <div class="flex items-center justify-between mb-4">
-      <h1 v-if="!isCollapsed" class="text-2xl font-bold">Tapxi</h1>
+      <h1 v-if="!isCollapsed" class="text-2xl font-bold">MCT Project</h1>
       <button @click="togglePanel">
         <PanelLeftClose :class="[isCollapsed ? '' : 'ml-2']" :size="24" />
       </button>
@@ -60,7 +60,11 @@ const togglePanel = () => {
           : 'absolute bottom-16 right-0 left-0 w-10 h-10 mx-auto bg-white rounded-full',
       ]"
     >
-      <div class="flex items-center justify-center space-x-2 mt-2">
+      <button
+        @click="() => {}"
+        class="flex items-center justify-center space-x-2 mt-2 focus:outline-none"
+        aria-label="User Account"
+      >
         <div
           v-if="!isCollapsed"
           class="w-12 h-12 mr-4 rounded-full bg-white"
@@ -68,10 +72,10 @@ const togglePanel = () => {
         <div>
           <p v-if="!isCollapsed" class="text-md font-semibold capitalize">SH</p>
           <p v-if="!isCollapsed" class="text-xs">
-            <span class="text-green-500 font-mono capitalize">user</span>
+        <span class="text-green-500 font-mono capitalize">user</span>
           </p>
         </div>
-      </div>
+      </button>
     </div>
 
     <div class="absolute bottom-5 text-center" v-if="!isCollapsed">

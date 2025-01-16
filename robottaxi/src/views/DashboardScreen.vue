@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { MoonIcon, SunIcon } from "lucide-vue-next";
 import Button from "../components/cta/Button.vue";
+import type { Vehicle } from "../interface/api.interface";
+import useAxios from "../composables/useAxios";
+
+// Define the CORS proxy URL
+//const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
 //import MapView from "../components/Map.vue";
+const CORS_ALLOWED_ORIGINS = ["http://localhost:5173"];
+const { getData } = useAxios();
 
 // Define the username
 const username = ref("John Doe");
@@ -28,6 +35,17 @@ if (isDarkMode.value) {
 } else {
   document.documentElement.classList.remove("dark");
 }
+
+const vehicle = ref<Vehicle | null>(null);
+
+onMounted(async () => {
+  try {
+    vehicle.value = await getData("/vehicles"); // Adjusted endpoint
+    console.log("Vehicle Data:", vehicle.value);
+  } catch (error) {
+    console.error("Failed to fetch vehicle data:", error);
+  }
+});
 </script>
 
 <template>
@@ -42,7 +60,8 @@ if (isDarkMode.value) {
       </Button>
     </div>
     <p class="mt-4 text-lg">This is a transition example using motion.</p>
-
+    <h1>Vehicle Information</h1>
+    <p v-if="vehicle">{{ vehicle.manufacturer }}</p>
     <!-- <MapView /> -->
     <!-- <VehicleCard /> -->
   </section>
