@@ -72,7 +72,7 @@ const togglePanel = () => {
         <div>
           <p v-if="!isCollapsed" class="text-md font-semibold capitalize">SH</p>
           <p v-if="!isCollapsed" class="text-xs">
-        <span class="text-green-500 font-mono capitalize">user</span>
+            <span class="text-green-500 font-mono capitalize">user</span>
           </p>
         </div>
       </button>

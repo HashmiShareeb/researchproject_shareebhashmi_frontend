@@ -2,17 +2,18 @@
 import { onMounted, ref, watch } from "vue";
 import { MoonIcon, SunIcon } from "lucide-vue-next";
 import Button from "../components/cta/Button.vue";
-import type { Vehicle } from "../interface/api.interface";
+import type { Recipe, Vehicle } from "../interface/api.interface";
 import useAxios from "../composables/useAxios";
+import VehicleCard from "../components/VehicleCard.vue";
 
 // Define the CORS proxy URL
 //const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
-//import MapView from "../components/Map.vue";
+import MapView from "../components/Map.vue";
 const CORS_ALLOWED_ORIGINS = ["http://localhost:5173"];
 const { getData } = useAxios();
 
 // Define the username
-const username = ref("John Doe");
+const username = ref("JR JR");
 
 // Check the initial dark mode preference
 const isDarkMode = ref(localStorage.getItem("theme") === "dark");
@@ -36,16 +37,27 @@ if (isDarkMode.value) {
   document.documentElement.classList.remove("dark");
 }
 
-const vehicle = ref<Vehicle | null>(null);
+const vehicles = ref<Vehicle[]>([]);
 
 onMounted(async () => {
   try {
-    vehicle.value = await getData("/vehicles"); // Adjusted endpoint
-    console.log("Vehicle Data:", vehicle.value);
+    vehicles.value = await getData("/vehicles"); // Adjusted endpoint
+    console.log("api :", vehicles.value);
   } catch (error) {
-    console.error("Failed to fetch vehicle data:", error);
+    console.error("Failed to fetch api :", error);
   }
 });
+
+// const recipes = ref<Recipe | null>(null);
+
+// onMounted(async () => {
+//   try {
+//     recipes.value = await getData("/recipes"); // Adjusted endpoint
+//     console.log("Recipe Data:", recipes.value);
+//   } catch (error) {
+//     console.error("Failed to fetch recipe data:", error);
+//   }
+// });
 </script>
 
 <template>
@@ -59,10 +71,24 @@ onMounted(async () => {
         {{ isDarkMode ? "Light Mode" : "Dark Mode" }}
       </Button>
     </div>
-    <p class="mt-4 text-lg">This is a transition example using motion.</p>
-    <h1>Vehicle Information</h1>
-    <p v-if="vehicle">{{ vehicle.manufacturer }}</p>
+
+    <h1 v-if="vehicles">Recipe Information</h1>
     <!-- <MapView /> -->
-    <!-- <VehicleCard /> -->
+
+    <!-- test api -->
+    <div class="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Loop through the first 5 recipes and display RecipeCard for each -->
+      <!-- <VehicleCard
+        v-for="(recipe, i) in recipes?.slice(0, 5) ?? []"
+        :key="i"
+        :recipe="recipe"
+      /> -->
+
+      <VehicleCard
+        v-for="(vehicle, i) in vehicles"
+        :key="i"
+        :vehicle="vehicle"
+      />
+    </div>
   </section>
 </template>
