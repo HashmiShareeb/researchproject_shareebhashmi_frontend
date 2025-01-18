@@ -13,7 +13,7 @@ const CORS_ALLOWED_ORIGINS = ["http://localhost:5173"];
 const { getData } = useAxios();
 
 // Define the username
-const username = ref("JR JR");
+const username = ref("User");
 
 // Check the initial dark mode preference
 const isDarkMode = ref(localStorage.getItem("theme") === "dark");
@@ -90,5 +90,6 @@ onMounted(async () => {
         :vehicle="vehicle"
       />
     </div>
+    <MapView />
   </section>
 </template>

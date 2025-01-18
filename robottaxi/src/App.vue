@@ -3,7 +3,8 @@ import AppHeader from "./components/generic/AppHeader.vue";
 </script>
 
 <template>
-  <div class="dark:bg-black flex bg-neutral-100 min-h-screen">
+  <div class="dark:bg-black flex bg-neutral-100 h-screen">
+   
     <AppHeader />
 
     <!-- Main content -->

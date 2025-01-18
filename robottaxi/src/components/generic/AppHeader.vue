@@ -19,7 +19,7 @@ const togglePanel = () => {
 <template>
   <div
     :class="[
-      'relative h-screen p-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white rounded-r-lg flex-shrink-0 transition-all duration-300 ease-in-out',
+      'relative p-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white rounded-r-lg transition-all duration-300 ease-in-out h-full flex-shrink-0',
       isCollapsed ? 'w-18' : 'w-64',
     ]"
   >
@@ -40,10 +40,12 @@ const togglePanel = () => {
         </RouterLink>
       </li>
       <li>
-        <span class="inline-flex gap-4">
-          <Earth />
-          <span v-if="!isCollapsed">Map Overview</span>
-        </span>
+        <RouterLink :to="{ name: 'Map' }">
+          <span class="inline-flex gap-4">
+            <Earth />
+            <span v-if="!isCollapsed">Map Overview</span>
+          </span>
+        </RouterLink>
       </li>
       <li>
         <span class="inline-flex gap-4">

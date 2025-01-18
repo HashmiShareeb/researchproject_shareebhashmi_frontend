@@ -11,6 +11,11 @@ const routes: RouteRecordRaw[] = [
     name: "Home",
     component: () => import("../views/DashboardScreen.vue"),
   },
+  {
+    path: "/map",
+    name: "Map",
+    component: () => import("../views/MapView.vue"),
+  },
 ];
 
 const router: Router = createRouter({
