@@ -5,6 +5,7 @@ import {
   Earth,
   PanelLeftClose,
   PanelRightClose,
+  CarFront,
 } from "lucide-vue-next";
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
@@ -19,7 +20,7 @@ const togglePanel = () => {
 <template>
   <div
     :class="[
-      'relative p-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white rounded-r-lg transition-all duration-300 ease-in-out h-full flex-shrink-0',
+      'relative p-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white rounded-r-lg transition-all duration-300 ease-in-out ',
       isCollapsed ? 'w-18' : 'w-64',
     ]"
   >
@@ -31,10 +32,12 @@ const togglePanel = () => {
     </div>
 
     <ul class="space-y-8 pt-6 cursor-pointer mx-auto">
-      <li>
+      <li :class="{ 'text-white font-bold': $route.name === 'Home' }">
         <RouterLink :to="{ name: 'Home' }">
           <span class="inline-flex gap-4">
-            <Home />
+            <Home
+              :class="{ 'fill-current text-white': $route.name === 'Home' }"
+            />
             <span v-if="!isCollapsed">Home</span>
           </span>
         </RouterLink>
@@ -42,14 +45,30 @@ const togglePanel = () => {
       <li>
         <RouterLink :to="{ name: 'Map' }">
           <span class="inline-flex gap-4">
-            <Earth />
+            <Earth
+              :class="{ 'fill-current text-white': $route.name === 'Map' }"
+            />
             <span v-if="!isCollapsed">Map Overview</span>
           </span>
         </RouterLink>
       </li>
       <li>
+        <RouterLink :to="{ name: 'Vehicle' }">
+          <span class="inline-flex gap-4">
+            <CarFront
+              :class="{
+                'fill-current text-white': $route.name === 'Vehicle',
+              }"
+            />
+            <span v-if="!isCollapsed">Vehicle managment</span>
+          </span>
+        </RouterLink>
+      </li>
+      <li>
         <span class="inline-flex gap-4">
-          <Bolt />
+          <Bolt
+            :class="{ 'fill-current text-white': $route.name === 'Settings' }"
+          />
           <span v-if="!isCollapsed">Settings</span>
         </span>
       </li>
@@ -63,7 +82,11 @@ const togglePanel = () => {
       ]"
     >
       <button
-        @click="() => {}"
+        @click="
+          () => {
+            $router.push({ name: 'Account' });
+          }
+        "
         class="flex items-center justify-center space-x-2 mt-2 focus:outline-none"
         aria-label="User Account"
       >

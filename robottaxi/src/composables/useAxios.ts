@@ -18,7 +18,27 @@ const useAxios = () => {
     }
   };
 
-  return { getData };
+  const postData = async (endpoint: string, data: any) => {
+    try {
+      const response = await API.post(endpoint, data);
+      return response.data;
+    } catch (error) {
+      console.error("Error posting data:", error);
+      throw error;
+    }
+  };
+
+  const deleteData = async (endpoint: string) => {
+    try {
+      const response = await API.delete(endpoint);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      throw error;
+    }
+  };
+
+  return { getData, postData, deleteData };
 };
 
 export default useAxios;
