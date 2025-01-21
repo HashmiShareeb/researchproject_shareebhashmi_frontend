@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="my-3 rounded-xl min-h-[400px]"
-    ref="mapElement"
-  ></div>
+  <div class="my-3 rounded-xl min-h-[600px] w-full" ref="mapElement"></div>
 </template>
 
 <script lang="ts" setup>

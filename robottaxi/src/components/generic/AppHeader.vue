@@ -6,6 +6,7 @@ import {
   PanelLeftClose,
   PanelRightClose,
   CarFront,
+  User,
 } from "lucide-vue-next";
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
@@ -20,14 +21,25 @@ const togglePanel = () => {
 <template>
   <div
     :class="[
-      'relative p-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white rounded-r-lg transition-all duration-300 ease-in-out ',
+      'relative p-5 bg-gradient-to-br from-blue-500 to-purple-500 text-white rounded-r-lg',
       isCollapsed ? 'w-18' : 'w-64',
     ]"
   >
     <div class="flex items-center justify-between mb-4">
-      <h1 v-if="!isCollapsed" class="text-2xl font-bold">MCT Project</h1>
+      <h1 v-if="!isCollapsed" class="text-2xl font-bold">
+        MCT Project
+        <h2 class="" v-if="$route.name === 'Admin'">
+          <span class="text-xl font-mono">Admin</span>
+        </h2>
+      </h1>
+
       <button @click="togglePanel">
-        <PanelLeftClose :class="[isCollapsed ? '' : 'ml-2']" :size="24" />
+        <PanelLeftClose
+          v-if="!isCollapsed"
+          :class="[isCollapsed ? '' : 'ml-2']"
+          :size="24"
+        />
+        <PanelRightClose v-else :size="24" />
       </button>
     </div>
 
@@ -53,7 +65,7 @@ const togglePanel = () => {
         </RouterLink>
       </li>
       <li>
-        <RouterLink :to="{ name: 'Vehicle' }">
+        <RouterLink :to="{ name: 'Vehicle List' }">
           <span class="inline-flex gap-4">
             <CarFront
               :class="{
@@ -71,6 +83,16 @@ const togglePanel = () => {
           />
           <span v-if="!isCollapsed">Settings</span>
         </span>
+      </li>
+      <li>
+        <RouterLink :to="{ name: 'Admin' }">
+          <span class="inline-flex gap-4">
+            <User
+              :class="{ 'fill-current text-white': $route.name === 'Admin' }"
+            />
+            <span v-if="!isCollapsed">Admin</span>
+          </span>
+        </RouterLink>
       </li>
     </ul>
     <!-- account details -->

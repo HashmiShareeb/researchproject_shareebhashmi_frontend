@@ -35,29 +35,64 @@ onMounted(async () => {
 //     console.error("Failed to fetch recipe data:", error);
 //   }
 // });
+
+watch(vehicles, (newVehicles) => {
+  console.log("Vehicles:", newVehicles);
+
+  // Check if the vehicles array is empty
+  if (newVehicles.length === 0) {
+    console.log("No vehicles found");
+    return;
+  }
+
+  // Check if the vehicles array contains any null values
+  if (newVehicles.some((vehicle) => vehicle === null)) {
+    console.error("Some vehicles are null");
+    return;
+  }
+});
 </script>
 
 <template>
   <section class="px-8 dark:text-white">
-    <h1 v-if="vehicles">Recipe Information</h1>
-    <!-- <MapView /> -->
-
-    <!-- test api -->
-    <div class="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Loop through the first 5 recipes and display RecipeCard for each -->
-      <!-- <VehicleCard
-        v-for="(recipe, i) in recipes?.slice(0, 5) ?? []"
-        :key="i"
-        :recipe="recipe"
-      /> -->
-
-      <VehicleCard
-        v-for="(vehicle, i) in vehicles"
-        :key="i"
-        :vehicle="vehicle"
-      />
-
-      <MapView />
+    <h1 v-if="vehicles" class="text-2xl font-medium mb-4">
+      There are
+      <span class="text-purple-500 dark:text-purple-300"
+        >{{ vehicles.length }} vehicles </span
+      >around your area.
+    </h1>
+    <div class="flex flex-col gap-4">
+      <div class="w-full">
+        <MapView
+          class="w-full h-64 md:h-auto lg:h-[500px]"
+          :markers="
+            vehicles.map((vehicle) => ({
+              lat: 56.9496,
+              lng: 24.1052,
+              label: vehicle.vehicleStatus,
+            }))
+          "
+        />
+      </div>
+      <div class="w-full md:hidden block">
+        <div class="grid grid-cols-3 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <VehicleCard
+            v-for="(vehicle, i) in vehicles"
+            :key="i"
+            :vehicle="vehicle"
+          />
+        </div>
+      </div>
+      <div class="w-full m-auto hidden md:block">
+        <div class="overflow-x-auto whitespace-nowrap">
+          <VehicleCard
+            v-for="(vehicle, i) in vehicles"
+            :key="i"
+            :vehicle="vehicle"
+            class="inline-block p-2"
+          />
+        </div>
+      </div>
     </div>
   </section>
 </template>

@@ -1,7 +1,5 @@
 <template>
   <section class="dark:text-white">
-    <h1 class="font-semibold text-4xl mb-4">Vehicle List</h1>
-
     <!-- Table Wrapper -->
     <div
       class="overflow-x-auto rounded-md dark:bg-neutral-800 bg-white p-0 shadow-md"
@@ -71,6 +69,13 @@
     <div class="mt-4 flex justify-end">
       <Button @click="addVehicle" :icon="PlusIcon"> Add New Vehicle </Button>
     </div>
+
+    <Modal
+      v-if="showModal"
+      :vehicle="currentVehicle"
+      @close="closeModal"
+      @save="saveVehicle"
+    />
   </section>
 </template>
 
@@ -80,6 +85,7 @@ import useAxios from "../../composables/useAxios";
 import type { Vehicle } from "../../interface/api.interface";
 import Button from "../generic/Button.vue";
 import { TrashIcon, PlusIcon, Pen } from "lucide-vue-next";
+import Modal from "../generic/Modal.vue";
 
 const { getData, postData, deleteData } = useAxios();
 const vehicles = ref<Vehicle[]>([]);
@@ -114,6 +120,48 @@ const deleteVehicle = async (vehicleId: string) => {
 const addVehicle = async () => {
   console.log("Adding new vehicle");
 
-  alert("This feature is not implemented yet.");
+  const newVehicle = {
+    vehicleId: "",
+    manufacturer: "",
+    model: "",
+    licensePlate: "",
+    batteryLevel: 100,
+
+    vehicleStatus: "",
+  };
+};
+const showModal = ref(false);
+const currentVehicle = ref<Vehicle | null>(null);
+
+const openModal = (vehicle: Vehicle | null = null) => {
+  currentVehicle.value = vehicle;
+  showModal.value = true;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+  currentVehicle.value = null;
+};
+
+const saveVehicle = async (vehicle: Vehicle) => {
+  try {
+    if (vehicle.vehicleId) {
+      // Update existing vehicle
+      await postData(`/vehicles/${vehicle.vehicleId}`, vehicle);
+      const index = vehicles.value.findIndex(
+        (v) => v.vehicleId === vehicle.vehicleId
+      );
+      if (index !== -1) {
+        vehicles.value[index] = vehicle;
+      }
+    } else {
+      // Add new vehicle
+      const response = await postData("/vehicles", vehicle);
+      vehicles.value.push(response.data);
+    }
+    closeModal();
+  } catch (error) {
+    console.error("Failed to save vehicle:", error);
+  }
 };
 </script>

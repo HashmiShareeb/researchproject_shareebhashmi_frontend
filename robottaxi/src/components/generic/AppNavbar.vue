@@ -25,10 +25,19 @@ onMounted(() => {
     root.classList.remove("dark");
   }
 });
+
+//ref username
+const username = ref("User");
 </script>
 
 <template>
-  <div class="flex items-center justify-end dark:text-white p-4">
+  <div class="flex items-center justify-between dark:text-white p-4">
+    <div class="ml-4">
+      <h1 v-if="$route.name === 'Home'" class="text-3xl font-bold">
+        Welcome {{ username }}
+      </h1>
+      <h1 v-else class="text-3xl font-bold">{{ $route.name }}</h1>
+    </div>
     <Button
       :icon="isDarkMode ? SunIcon : MoonIcon"
       @click="isDarkMode = !isDarkMode"
