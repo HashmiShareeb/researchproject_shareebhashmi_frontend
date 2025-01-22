@@ -50,7 +50,9 @@
               </span>
             </td>
             <td class="p-3 flex justify-end gap-3">
-              <Button @click="editVehicle(vehicle)" :icon="Pen"> Edit </Button>
+              <Button @click="editVehicle(vehicle.vehicleId)" :icon="Pen">
+                Edit
+              </Button>
 
               <Button
                 @click="deleteVehicle(vehicle.vehicleId)"
@@ -86,9 +88,12 @@ import type { Vehicle } from "../../interface/api.interface";
 import Button from "../generic/Button.vue";
 import { TrashIcon, PlusIcon, Pen } from "lucide-vue-next";
 import Modal from "../generic/Modal.vue";
+import { useRouter } from "vue-router";
 
 const { getData, postData, deleteData } = useAxios();
 const vehicles = ref<Vehicle[]>([]);
+
+const router = useRouter();
 
 onMounted(async () => {
   try {
@@ -99,9 +104,9 @@ onMounted(async () => {
 });
 
 // 🛠 Edit Vehicle
-const editVehicle = (vehicle: Vehicle) => {
-  console.log("Editing:", vehicle);
-  // TODO: Implement edit modal/form
+const editVehicle = (vehicleId: string) => {
+  alert("Edit vehicle with ID: " + vehicleId);
+  router.push(`/admin/vehicles/edit/${vehicleId}`);
 };
 
 // 🛠 Delete Vehicle
@@ -119,16 +124,17 @@ const deleteVehicle = async (vehicleId: string) => {
 // 🛠 Add Vehicle
 const addVehicle = async () => {
   console.log("Adding new vehicle");
+  router.push("/admin/vehicles/add");
 
-  const newVehicle = {
-    vehicleId: "",
-    manufacturer: "",
-    model: "",
-    licensePlate: "",
-    batteryLevel: 100,
+  // const newVehicle = {
+  //   vehicleId: "",
+  //   manufacturer: "",
+  //   model: "",
+  //   licensePlate: "",
+  //   batteryLevel: 100,
 
-    vehicleStatus: "",
-  };
+  //   vehicleStatus: "",
+  // };
 };
 const showModal = ref(false);
 const currentVehicle = ref<Vehicle | null>(null);

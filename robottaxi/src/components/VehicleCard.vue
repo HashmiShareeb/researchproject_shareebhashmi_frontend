@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Recipe, Vehicle } from "../interface/api.interface";
+import { Pen } from "lucide-vue-next";
 import Button from "./generic/Button.vue";
 import {
   LucideBatteryFull,
@@ -7,6 +8,8 @@ import {
   LucideBatteryMedium,
   LucideBatteryCharging,
 } from "lucide-vue-next";
+
+import { VehicleStatus } from "../interface/api.interface";
 
 import { useRouter } from "vue-router";
 
@@ -34,12 +37,14 @@ const viewDetails = (vehicleId: string) => {
 
           <div
             :class="{
-              'text-sm uppercase absolute top-0 right-0 flex items-center justify-center rounded-full p-2 hover:cursor-pointer': true,
-              'bg-green-200 text-green-500': vehicle.vehicleStatus === 'IN_USE',
-              'bg-orange-200 text-orange-500':
-                vehicle.vehicleStatus === 'out_of_service',
-              'bg-red-200 text-red-500':
-                vehicle.vehicleStatus === 'OUT_OF_SERVICE',
+              'text-sm uppercase absolute top-0 right-0 flex items-center justify-center rounded-full p-2 ': true,
+              'bg-green-200 text-green-600':
+                vehicle.vehicleStatus === VehicleStatus.IN_USE ||
+                vehicle.vehicleStatus === VehicleStatus.AVAILABLE,
+              'bg-orange-200 text-orange-600':
+                vehicle.vehicleStatus === VehicleStatus.MAINTENANCE,
+              'bg-red-200 text-red-600':
+                vehicle.vehicleStatus === VehicleStatus.OUT_OF_SERVICE,
             }"
           >
             {{ vehicle.vehicleStatus }}
@@ -101,6 +106,16 @@ const viewDetails = (vehicleId: string) => {
             })
           "
           text="View Details"
+        />
+        <Button
+          class="ml-auto mt-2"
+          @click="
+            router.push({
+              name: 'Edit Vehicle',
+              params: { id: vehicle.vehicleId },
+            })
+          "
+          :icon="Pen"
         />
       </div>
     </div>

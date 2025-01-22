@@ -45,6 +45,16 @@ const routes: RouteRecordRaw[] = [
     name: "Vehicle List",
     component: VehicleList,
   },
+  {
+    path: "/admin/vehicles/edit/:id", // ✅ Correct: Relative path ("/admin/vehicles/edit/:id")
+    name: "Edit Vehicle",
+    component: () => import("../views/vehicle/VehicleEdit.vue"),
+  },
+  {
+    path: "/admin/vehicles/add", // ✅ Correct: Relative path ("/admin/vehicles/add")
+    name: "Add Vehicle",
+    component: () => import("../views/vehicle/VehicleAdd.vue"),
+  },
 ];
 
 const router: Router = createRouter({

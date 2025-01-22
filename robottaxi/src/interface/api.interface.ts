@@ -1,3 +1,10 @@
+export enum VehicleStatus {
+  AVAILABLE = "AVAILABLE",
+  IN_USE = "IN_USE",
+  MAINTENANCE = "MAINTENANCE",
+  OUT_OF_SERVICE = "OUT_OF_SERVICE",
+}
+
 export interface Vehicle {
   vehicleId: string;
   manufacturer: string;
@@ -6,7 +13,20 @@ export interface Vehicle {
   year: number;
   batteryLevel: number;
   vehicleImage: string;
-  vehicleStatus: string;
+  vehicleStatus: VehicleStatus;
+}
+
+export interface Ride {
+  rideId: string;
+  rideName: string;
+  rideDescription: string;
+  ridePrice: number;
+  rideStatus: string;
+  location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  };
 }
 
 //example api for testing purposes
