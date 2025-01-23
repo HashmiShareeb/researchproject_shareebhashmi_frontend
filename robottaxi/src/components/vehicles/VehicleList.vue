@@ -38,11 +38,12 @@
               <span
                 :class="{
                   'bg-green-200 text-green-800':
-                    vehicle.vehicleStatus === 'IN_USE',
+                    vehicle.vehicleStatus === VehicleStatus.IN_USE ||
+                    vehicle.vehicleStatus === VehicleStatus.AVAILABLE,
                   'bg-orange-200 text-orange-800':
-                    vehicle.vehicleStatus === 'OUT_OF_SERVICE',
+                    vehicle.vehicleStatus === VehicleStatus.MANTAINANCE,
                   'bg-red-200 text-red-800':
-                    vehicle.vehicleStatus === 'MAINTENANCE',
+                    vehicle.vehicleStatus === VehicleStatus.OUT_OF_SERVICE,
                 }"
                 class="px-3 py-1 rounded-md text-xs font-semibold"
               >
@@ -71,13 +72,6 @@
     <div class="mt-4 flex justify-end">
       <Button @click="addVehicle" :icon="PlusIcon"> Add New Vehicle </Button>
     </div>
-
-    <Modal
-      v-if="showModal"
-      :vehicle="currentVehicle"
-      @close="closeModal"
-      @save="saveVehicle"
-    />
   </section>
 </template>
 
@@ -87,12 +81,11 @@ import useAxios from "../../composables/useAxios";
 import type { Vehicle } from "../../interface/api.interface";
 import Button from "../generic/Button.vue";
 import { TrashIcon, PlusIcon, Pen } from "lucide-vue-next";
-import Modal from "../generic/Modal.vue";
 import { useRouter } from "vue-router";
 
 const { getData, postData, deleteData } = useAxios();
 const vehicles = ref<Vehicle[]>([]);
-
+import { VehicleStatus } from "../../interface/api.interface";
 const router = useRouter();
 
 onMounted(async () => {
@@ -125,29 +118,9 @@ const deleteVehicle = async (vehicleId: string) => {
 const addVehicle = async () => {
   console.log("Adding new vehicle");
   router.push("/admin/vehicles/add");
-
-  // const newVehicle = {
-  //   vehicleId: "",
-  //   manufacturer: "",
-  //   model: "",
-  //   licensePlate: "",
-  //   batteryLevel: 100,
-
-  //   vehicleStatus: "",
-  // };
 };
-const showModal = ref(false);
+
 const currentVehicle = ref<Vehicle | null>(null);
-
-const openModal = (vehicle: Vehicle | null = null) => {
-  currentVehicle.value = vehicle;
-  showModal.value = true;
-};
-
-const closeModal = () => {
-  showModal.value = false;
-  currentVehicle.value = null;
-};
 
 const saveVehicle = async (vehicle: Vehicle) => {
   try {
@@ -165,7 +138,6 @@ const saveVehicle = async (vehicle: Vehicle) => {
       const response = await postData("/vehicles", vehicle);
       vehicles.value.push(response.data);
     }
-    closeModal();
   } catch (error) {
     console.error("Failed to save vehicle:", error);
   }

@@ -16,6 +16,8 @@ const username = ref("User");
 
 const vehicles = ref<Vehicle[]>([]);
 
+import { VehicleStatus } from "../interface/api.interface";
+
 onMounted(async () => {
   try {
     vehicles.value = await getData("/vehicles"); // Adjusted endpoint
@@ -83,10 +85,14 @@ watch(vehicles, (newVehicles) => {
           />
         </div>
       </div>
+
       <div class="w-full m-auto hidden md:block">
+        <h1>Available Vehicles</h1>
         <div class="overflow-x-auto whitespace-nowrap">
           <VehicleCard
-            v-for="(vehicle, i) in vehicles"
+            v-for="(vehicle, i) in vehicles.filter(
+              (vehicle) => vehicle.vehicleStatus === VehicleStatus.AVAILABLE
+            )"
             :key="i"
             :vehicle="vehicle"
             class="inline-block p-2"

@@ -99,7 +99,8 @@
       >
         <option value="IN_USE">In Use</option>
         <option value="AVAILABLE">Available</option>
-        <option value="MAINTENANCE">Maintenance</option>
+        <option value="MANTAINANCE">Maintenance</option>
+        <option value="OUT_OF_SERVICE">Out of Service</option>
       </select>
     </div>
   </form>
@@ -127,9 +128,9 @@ const vehicle = ref({
   manufacturer: "",
   model: "",
   licensePlate: "",
-  year: new Date().getFullYear(),
+  year: 2023,
   batteryLevel: 100,
-  vehicleStatus: ["IN_USE", "AVAILABLE", "MAINTENANCE"],
+  vehicleStatus: "AVAILABLE",
 });
 
 const isEdit = computed(() => !!route.params.id);

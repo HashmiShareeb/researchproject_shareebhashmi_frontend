@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Recipe, Vehicle } from "../interface/api.interface";
-import { Pen } from "lucide-vue-next";
+import { Eye, Pen } from "lucide-vue-next";
 import Button from "./generic/Button.vue";
 import {
   LucideBatteryFull,
@@ -37,12 +37,12 @@ const viewDetails = (vehicleId: string) => {
 
           <div
             :class="{
-              'text-sm uppercase absolute top-0 right-0 flex items-center justify-center rounded-full p-2 ': true,
+              'text-sm uppercase font-semibold absolute top-0 right-0 flex items-center justify-center rounded-full p-2 ': true,
               'bg-green-200 text-green-600':
                 vehicle.vehicleStatus === VehicleStatus.IN_USE ||
                 vehicle.vehicleStatus === VehicleStatus.AVAILABLE,
               'bg-orange-200 text-orange-600':
-                vehicle.vehicleStatus === VehicleStatus.MAINTENANCE,
+                vehicle.vehicleStatus === VehicleStatus.MANTAINANCE,
               'bg-red-200 text-red-600':
                 vehicle.vehicleStatus === VehicleStatus.OUT_OF_SERVICE,
             }"
@@ -82,7 +82,7 @@ const viewDetails = (vehicleId: string) => {
               {{ vehicle.manufacturer }} {{ vehicle.model }}
             </p>
             <p
-              class="text-md font-medium dark:text-purple-300 text-purple-400 md:mt-2"
+              class="text-md font-medium dark:text-indigo-300 text-indigo-400 md:mt-2"
             >
               {{ vehicle.licensePlate }}
             </p>
@@ -92,22 +92,14 @@ const viewDetails = (vehicleId: string) => {
           class="flex items-center justify-between md:items-center lg:justify-between"
         >
           <div class="flex">
-            <p class="!mb-0 text-sm uppercase text-neutral-400">
-              prod year: {{ vehicle.year }}
+            <p class="!mb-0 text-sm dark:text-neutral-300 text-neutral-500">
+              {{ vehicle.year }}
             </p>
           </div>
         </div>
+
         <Button
-          class="ml-auto mt-2"
-          @click="
-            router.push({
-              name: 'VehicleDetail',
-              params: { id: vehicle.vehicleId },
-            })
-          "
-          text="View Details"
-        />
-        <Button
+          v-if="vehicle.vehicleStatus !== VehicleStatus.IN_USE"
           class="ml-auto mt-2"
           @click="
             router.push({
@@ -116,6 +108,17 @@ const viewDetails = (vehicleId: string) => {
             })
           "
           :icon="Pen"
+        />
+        <Button
+          v-if="vehicle.vehicleStatus === VehicleStatus.IN_USE"
+          class="ml-auto mt-2"
+          @click="
+            router.push({
+              name: 'VehicleDetail',
+              params: { id: vehicle.vehicleId },
+            })
+          "
+          :icon="Eye"
         />
       </div>
     </div>

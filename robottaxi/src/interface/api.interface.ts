@@ -1,7 +1,7 @@
 export enum VehicleStatus {
   AVAILABLE = "AVAILABLE",
   IN_USE = "IN_USE",
-  MAINTENANCE = "MAINTENANCE",
+  MANTAINANCE = "MANTAINANCE",
   OUT_OF_SERVICE = "OUT_OF_SERVICE",
 }
 
@@ -26,6 +26,44 @@ export interface Ride {
     latitude: number;
     longitude: number;
     address: string;
+  };
+}
+
+export interface ActiveRide {
+  rideId: string;
+
+  rideName: string;
+
+  rideDescription: string;
+
+  ridePrice: number;
+
+  rideStatus: string;
+
+  location: {
+    address: string;
+
+    latitude: number;
+
+    longitude: number;
+  };
+
+  vehicle: {
+    manufacturer: string;
+
+    model: string;
+
+    licensePlate: string;
+
+    batteryLevel: number;
+
+    vehicleStatus: string;
+  };
+
+  user: {
+    username: string;
+
+    email: string;
   };
 }
 

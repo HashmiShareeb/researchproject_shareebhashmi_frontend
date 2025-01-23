@@ -98,7 +98,8 @@
       >
         <option value="IN_USE">In Use</option>
         <option value="AVAILABLE">Available</option>
-        <option value="MAINTENANCE">Maintenance</option>
+        <option value="MANTAINANCE">Maintenance</option>
+        <option value="OUT_OF_SERVICE">Out of Service</option>
       </select>
     </div>
   </form>
@@ -128,7 +129,7 @@ const vehicle = ref({
   licensePlate: "",
   year: new Date().getFullYear(),
   batteryLevel: 100,
-  vehicleStatus: ["IN_USE", "AVAILABLE", "MAINTENANCE"],
+  vehicleStatus: ["IN_USE", "AVAILABLE", "MAINTENANCE", "OUT_OF_SERVICE"],
 });
 
 const saveVehicle = async () => {

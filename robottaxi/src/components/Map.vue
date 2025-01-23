@@ -1,52 +1,59 @@
 <template>
-  <div class="my-3 rounded-xl min-h-[600px] w-full" ref="mapElement"></div>
+  <div ref="mapContainer" class="map-container"></div>
 </template>
 
-<script lang="ts" setup>
-import { ref, onMounted, type PropType, type Ref } from "vue";
-import "mapbox-gl/dist/mapbox-gl.css"; // zeker niet vergeten
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
 import mapboxgl from "mapbox-gl";
 
+// Mapbox Token (Replace with your actual token)
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
-// Ensure map container exists
-const mapElement = ref<HTMLElement | null>(null);
+const mapContainer = ref<HTMLElement | null>(null);
 
-// Define props at the top (before onMounted)
-const props = defineProps({
-  markers: {
-    type: Array as PropType<{ lat: number; lng: number; label: string }[]>,
-    required: false,
+const ride = ref({
+  rideId: "8ac35a3b-9afe-447a-8703-882c8f98bcf1",
+  rideName: "City Center to Airport",
+  rideDescription: "Late night ride to the airport",
+  ridePrice: 25.5,
+  rideStatus: "REQUESTED",
+  location: {
+    latitude: 50.850346,
+    longitude: 4.351721,
+    address: "City Center",
   },
 });
 
 onMounted(() => {
-  if (!mapElement.value) return;
+  if (!mapContainer.value) return;
 
-  // Initialize the map
   const map = new mapboxgl.Map({
-    container: mapElement.value,
-    style: "mapbox://styles/mapbox/streets-v12", // Style URL
-    center: [-74.5, 40], // Default starting position [lng, lat]
-    zoom: 9, // Zoom level
+    container: mapContainer.value,
+    style: "mapbox://styles/mapbox/streets-v11",
+    center: [ride.value.location.longitude, ride.value.location.latitude], // Center on ride location
+    zoom: 12,
   });
 
-  // Function to display markers
-  const showMarkers = (map: mapboxgl.Map) => {
-    if (!props.markers || props.markers.length === 0) return;
-
-    props.markers.forEach((marker) => {
-      if (!marker.lat || !marker.lng) return;
-
-      new mapboxgl.Marker()
-        .setLngLat([marker.lng, marker.lat])
-        .setPopup(new mapboxgl.Popup().setHTML(marker.label))
-        .addTo(map);
-    });
-  };
-
-  map.on("load", () => {
-    showMarkers(map);
-  });
+  // Add Marker for Ride Location
+  new mapboxgl.Marker({ color: "red" })
+    .setLngLat([ride.value.location.longitude, ride.value.location.latitude])
+    .setPopup(
+      new mapboxgl.Popup().setHTML(`
+        <h3>${ride.value.rideName}</h3>
+        <p>${ride.value.rideDescription}</p>
+        <p><strong>Price:</strong> $${ride.value.ridePrice}</p>
+        <p><strong>Location:</strong> ${ride.value.location.address}</p>
+      `)
+    )
+    .addTo(map);
 });
 </script>
+
+<style>
+.map-container {
+  width: 100%;
+  height: 500px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+</style>
