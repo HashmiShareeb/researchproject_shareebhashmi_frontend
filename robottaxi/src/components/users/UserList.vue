@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="ride"
-    class="rounded-xl p-4 bg-neutral-100 dark:bg-neutral-800 dark:text-white"
-  >
+  <div v-if="ride" class="">
     <div class="mb-4">
       <span class="block font-semibold">User:</span>
       <span class="block text-indigo-400">{{ ride.user.username }}</span>

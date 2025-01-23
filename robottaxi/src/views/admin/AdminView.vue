@@ -76,13 +76,17 @@
         <h1 class="text-md mb-2 font-medium text-gray-700 dark:text-gray-300">
           Users in Active Rides
         </h1>
-        <UserList
-          v-if="rides.length > 0"
-          v-for="ride in rides"
-          :key="ride.rideId"
-          :ride="ride"
-          class="dark:shadow-none"
-        />
+        <aside
+          class="rounded-xl p-4 bg-neutral-100 dark:bg-neutral-800 dark:text-white"
+        >
+          <UserList
+            v-if="rides.length > 0"
+            v-for="ride in rides"
+            :key="ride.rideId"
+            :ride="ride"
+            class="dark:shadow-none mb-8"
+          />
+        </aside>
       </div>
     </div>
   </section>

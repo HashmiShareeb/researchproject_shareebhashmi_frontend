@@ -24,16 +24,16 @@ const routes: RouteRecordRaw[] = [
     name: "VehicleDetail",
     component: () => import("../views/vehicle/_slug.vue"),
   },
-  // {
-  //   path: "/login",
-  //   name: "Login",
-  //   component: () => import("../views/auth/LoginScreen.vue"),
-  // },
-  // {
-  //   path: "/register",
-  //   name: "Register",
-  //   component: () => import("../views/auth/RegisterScreen.vue"),
-  // },
+  {
+    path: "/login",
+    name: "Login",
+    component: () => import("../views/auth/LoginScreen.vue"),
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: () => import("../views/auth/RegisterScreen.vue"),
+  },
   // ADMIN
   {
     path: "/admin",

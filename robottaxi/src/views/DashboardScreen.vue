@@ -60,7 +60,12 @@ watch(vehicles, (newVehicles) => {
     <h1 v-if="vehicles" class="text-2xl font-medium mb-4">
       There are
       <span class="text-purple-500 dark:text-purple-300"
-        >{{ vehicles.length }} vehicles </span
+        >{{
+          vehicles.filter(
+            (vehicle) => vehicle.vehicleStatus === VehicleStatus.AVAILABLE
+          ).length
+        }}
+        vehicle(s) </span
       >around your area.
     </h1>
     <div class="flex flex-col gap-4">
