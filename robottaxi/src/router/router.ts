@@ -7,6 +7,7 @@ import {
 
 import VehicleList from "../components/vehicles/VehicleList.vue";
 import AdminView from "../views/admin/AdminView.vue";
+const isAuthenticated = () => !!localStorage.getItem("user");
 
 const routes: RouteRecordRaw[] = [
   {
@@ -60,6 +61,14 @@ const routes: RouteRecordRaw[] = [
 const router: Router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !isAuthenticated()) {
+    next("/login");
+  } else {
+    next();
+  }
 });
 
 export default router;

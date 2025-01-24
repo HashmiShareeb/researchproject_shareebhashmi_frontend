@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { MoonIcon, SunIcon } from "lucide-vue-next";
 import Button from "./Button.vue";
 // Check the initial dark mode preference
 const isDarkMode = ref(localStorage.getItem("theme") === "dark");
+const isLoggedIn = ref(false);
 
 // Update the class on the root element and localStorage whenever the mode changes
 watch(isDarkMode, (newValue) => {
@@ -16,27 +17,25 @@ watch(isDarkMode, (newValue) => {
     localStorage.setItem("theme", "light");
   }
 });
-
 onMounted(() => {
-  const root = document.documentElement;
-  if (isDarkMode.value) {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
+  // Check if the user is logged in and store it
+  const storedLoginState = localStorage.getItem("isLoggedIn");
+  if (storedLoginState === "true") {
+    isLoggedIn.value = true;
   }
 });
-
-//ref username
-const username = ref("User");
 </script>
 
 <template>
-  <div class="flex items-center justify-between dark:text-white p-4">
-    <div class="ml-4">
+  <header class="flex items-center justify-between dark:text-white p-4">
+    <div v-if="isLoggedIn" class="ml-4">
       <h1 v-if="$route.name === 'Home'" class="text-3xl font-bold">
-        Welcome {{ username }}
+        Welcome to the robotaxi app
       </h1>
-      <h1 v-else class="text-3xl font-bold">{{ $route.name }}</h1>
+    </div>
+    <div v-else>
+      Please log in to access your dashboard.
+      <RouterLink to="/login">Login</RouterLink>
     </div>
     <Button
       :icon="isDarkMode ? SunIcon : MoonIcon"
@@ -44,5 +43,5 @@ const username = ref("User");
     >
       {{ isDarkMode ? "Light Mode" : "Dark Mode" }}
     </Button>
-  </div>
+  </header>
 </template>

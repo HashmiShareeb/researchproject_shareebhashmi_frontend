@@ -3,6 +3,7 @@ import { onMounted, ref, watch } from "vue";
 import type { Recipe, Vehicle } from "../interface/api.interface";
 import useAxios from "../composables/useAxios";
 import VehicleCard from "../components/VehicleCard.vue";
+import type { User } from "../interface/user.interface";
 
 // Define the CORS proxy URL
 //const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
@@ -16,7 +17,23 @@ const username = ref("User");
 
 const vehicles = ref<Vehicle[]>([]);
 
+const user = ref<User | null>(null);
+
 import { VehicleStatus } from "../interface/api.interface";
+
+// const fetchedUser = async () => {
+//   try {
+//     const storedUser = localStorage.getItem("user");
+//     if (storedUser) {
+//       user.value = JSON.parse(storedUser);
+//     } else {
+//       user.value = await getData("/api/auth/user"); // Adjust if needed
+//       localStorage.setItem("user", JSON.stringify(user.value));
+//     }
+//   } catch (error) {
+//     console.error("Failed to fetch user:", error);
+//   }
+// };
 
 onMounted(async () => {
   try {
@@ -27,16 +44,13 @@ onMounted(async () => {
   }
 });
 
-// const recipes = ref<Recipe | null>(null);
+// Define the reactive value to track if the user is logged in
+const isLoggedIn = ref(false);
 
-// onMounted(async () => {
-//   try {
-//     recipes.value = await getData("/recipes"); // Adjusted endpoint
-//     console.log("Recipe Data:", recipes.value);
-//   } catch (error) {
-//     console.error("Failed to fetch recipe data:", error);
-//   }
-// });
+const storedLoginState = localStorage.getItem("isLoggedIn");
+if (storedLoginState === "true") {
+  isLoggedIn.value = true;
+}
 
 watch(vehicles, (newVehicles) => {
   console.log("Vehicles:", newVehicles);
@@ -56,7 +70,13 @@ watch(vehicles, (newVehicles) => {
 </script>
 
 <template>
-  <section class="px-8 dark:text-white">
+  <section class="px-8 dark:text-white" v-if="isLoggedIn">
+    Hello, {{ user?.username ?? "Guest" }}!
+    <div v-if="user">
+      <p>Email: {{ user.email }}</p>
+      <p>username: {{ user.username }}</p>
+      <!-- Add more user session information here as needed -->
+    </div>
     <h1 v-if="vehicles" class="text-2xl font-medium mb-4">
       There are
       <span class="text-purple-500 dark:text-purple-300"
@@ -105,5 +125,9 @@ watch(vehicles, (newVehicles) => {
         </div>
       </div>
     </div>
+  </section>
+  <section v-else>
+    <p>Please log in to access your dashboard.</p>
+    <RouterLink to="/login">Login</RouterLink>
   </section>
 </template>
