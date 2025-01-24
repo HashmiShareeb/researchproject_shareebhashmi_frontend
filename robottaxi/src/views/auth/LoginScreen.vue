@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import useAuth from "../../composables/useAuth";
+import Button from "../../components/generic/Button.vue";
 
 const { login, error } = useAuth();
 const router = useRouter();
@@ -12,9 +13,22 @@ const isLoggedIn = ref(false);
 
 const handleLogin = async () => {
   const response = await login(username.value, password.value);
+
+  console.log("Login response:", response); // Debugging output
+
   if (response) {
     alert("Login successful!");
     localStorage.setItem("isLoggedIn", "true");
+
+    // Ensure email exists before storing
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        username: username.value,
+        email: response.email ?? "N/A", // Fallback if email is missing
+      })
+    );
+
     router.push("/"); // Redirect after login
   }
 };
@@ -32,31 +46,36 @@ onMounted(() => {
   <div class="auth-container" v-if="!isLoggedIn">
     <h2>Login</h2>
     <form @submit.prevent="handleLogin">
-      <input v-model="username" type="text" placeholder="Username" required />
+      <div class="mb-4">
+        <input
+          v-model="username"
+          type="text"
+          placeholder="Username"
+          required
+          class="block dark:bg-neutral-700 w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+
       <input
         v-model="password"
         type="password"
         placeholder="Password"
+        class="block dark:bg-neutral-700 w-full p-2 border border-gray-300 rounded-md"
         required
       />
-      <button type="submit">Login</button>
+      <div class="mt-4">
+        <Button type="submit" text="Login" />
+      </div>
     </form>
-    <p v-if="error" class="error">{{ error }}</p>
-    <router-link to="/register">Don't have an account? Register</router-link>
+    <p v-if="error" class="text-red-500 dark:text-red-400">{{ error }}</p>
+    <router-link
+      to="/register"
+      class="block mt-4 text-indigo-500 dark:text-indigo-400 w-full text-center"
+      >Don't have an account? Register</router-link
+    >
   </div>
-  <div class="auth-container" v-else>
+  <div class="container" v-else>
     <h2>You are already logged in</h2>
     <router-link to="/">Go to Home</router-link>
   </div>
 </template>
-
-<style scoped>
-.auth-container {
-  max-width: 400px;
-  margin: auto;
-  text-align: center;
-}
-.error {
-  color: red;
-}
-</style>

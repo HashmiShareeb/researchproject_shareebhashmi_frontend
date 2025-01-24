@@ -5,6 +5,9 @@ import useAxios from "../composables/useAxios";
 import VehicleCard from "../components/VehicleCard.vue";
 import type { User } from "../interface/user.interface";
 
+import { VehicleStatus } from "../interface/api.interface";
+import { useAuthStore } from "../store/authStore";
+import { useRouter } from "vue-router";
 // Define the CORS proxy URL
 //const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
 import MapView from "../components/Map.vue";
@@ -13,13 +16,14 @@ const CORS_ALLOWED_ORIGINS = ["http://localhost:5173"];
 const { getData } = useAxios();
 
 // Define the username
-const username = ref("User");
 
 const vehicles = ref<Vehicle[]>([]);
-
 const user = ref<User | null>(null);
+const router = useRouter();
+const authStore = useAuthStore();
 
-import { VehicleStatus } from "../interface/api.interface";
+const username = ref("");
+const email = ref("");
 
 // const fetchedUser = async () => {
 //   try {
@@ -44,13 +48,29 @@ onMounted(async () => {
   }
 });
 
+onMounted(() => {
+  authStore.loadLoginState(); // Load the login state
+
+  if (!authStore.isLoggedIn) {
+    router.push("/login"); // Redirect to login if not logged in
+  }
+
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    user.value = JSON.parse(storedUser);
+    console.log("User info loaded:", user.value);
+  } else {
+    router.push("/login");
+  }
+});
+
 // Define the reactive value to track if the user is logged in
 const isLoggedIn = ref(false);
 
-const storedLoginState = localStorage.getItem("isLoggedIn");
-if (storedLoginState === "true") {
-  isLoggedIn.value = true;
-}
+// const storedLoginState = localStorage.getItem("isLoggedIn");
+// if (storedLoginState === "true") {
+//   isLoggedIn.value = true;
+// }
 
 watch(vehicles, (newVehicles) => {
   console.log("Vehicles:", newVehicles);
@@ -70,16 +90,10 @@ watch(vehicles, (newVehicles) => {
 </script>
 
 <template>
-  <section class="px-8 dark:text-white" v-if="isLoggedIn">
-    Hello, {{ user?.username ?? "Guest" }}!
-    <div v-if="user">
-      <p>Email: {{ user.email }}</p>
-      <p>username: {{ user.username }}</p>
-      <!-- Add more user session information here as needed -->
-    </div>
+  <section class="px-8 dark:text-white" v-if="authStore.isLoggedIn">
     <h1 v-if="vehicles" class="text-2xl font-medium mb-4">
       There are
-      <span class="text-purple-500 dark:text-purple-300"
+      <span class="text-indigo-500 dark:text-indigo-300"
         >{{
           vehicles.filter(
             (vehicle) => vehicle.vehicleStatus === VehicleStatus.AVAILABLE
@@ -93,11 +107,9 @@ watch(vehicles, (newVehicles) => {
         <MapView
           class="w-full h-64 md:h-auto lg:h-[500px]"
           :markers="
-            vehicles.map((vehicle) => ({
-              lat: 56.9496,
-              lng: 24.1052,
-              label: vehicle.vehicleStatus,
-            }))
+            vehicles.filter(
+              (vehicle) => vehicle.vehicleStatus === VehicleStatus.AVAILABLE
+            )
           "
         />
       </div>
@@ -112,7 +124,9 @@ watch(vehicles, (newVehicles) => {
       </div>
 
       <div class="w-full m-auto hidden md:block">
-        <h1>Available Vehicles</h1>
+        <h1 class="text-md mb-2 font-medium text-gray-700 dark:text-gray-300">
+          Available Vehicles
+        </h1>
         <div class="overflow-x-auto whitespace-nowrap">
           <VehicleCard
             v-for="(vehicle, i) in vehicles.filter(
