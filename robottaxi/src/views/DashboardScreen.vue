@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
-import type { Recipe, Vehicle } from "../interface/api.interface";
+import type { Vehicle } from "../interface/api.interface";
 import useAxios from "../composables/useAxios";
 import VehicleCard from "../components/VehicleCard.vue";
 import type { User } from "../interface/user.interface";
@@ -8,11 +8,15 @@ import type { User } from "../interface/user.interface";
 import { VehicleStatus } from "../interface/api.interface";
 import { useAuthStore } from "../store/authStore";
 import { useRouter } from "vue-router";
+import Button from "../components/generic/Button.vue";
+
 // Define the CORS proxy URL
 //const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
-import MapView from "../components/Map.vue";
+// import MapView from "../components/Map.vue";
+import MapboxSearch from "../components/MapboxSearch.vue";
+import { icons, LogOut } from "lucide-vue-next";
 
-const CORS_ALLOWED_ORIGINS = ["http://localhost:5173"];
+// const CORS_ALLOWED_ORIGINS = ["http://localhost:5173"];
 const { getData } = useAxios();
 
 // Define the username
@@ -22,8 +26,8 @@ const user = ref<User | null>(null);
 const router = useRouter();
 const authStore = useAuthStore();
 
-const username = ref("");
-const email = ref("");
+// const username = ref("");
+// const email = ref("");
 
 // const fetchedUser = async () => {
 //   try {
@@ -65,7 +69,7 @@ onMounted(() => {
 });
 
 // Define the reactive value to track if the user is logged in
-const isLoggedIn = ref(false);
+// const isLoggedIn = ref(false);
 
 // const storedLoginState = localStorage.getItem("isLoggedIn");
 // if (storedLoginState === "true") {
@@ -87,13 +91,44 @@ watch(vehicles, (newVehicles) => {
     return;
   }
 });
+
+// const accessToken =
+//   "pk.eyJ1Ijoic2hhc2htaSIsImEiOiJjbTRsb2dycjIwNGJnMmpzaGFoa2g0ZHN6In0.zbMpJI9ndXlMsxgCnmm00Q";
+// const options = ref({
+//   language: "en",
+//   country: "US",
+// });
+
+interface Marker {
+  lng: number;
+  lat: number;
+  // Add any other necessary properties for your markers
+}
+
+const markers = ref<Marker[]>([]);
+const handleSearchResult = (result: any) => {
+  // Update the markers based on the search result
+  console.log("test hier:", result);
+  markers.value = [
+    {
+      lng: result.lng,
+      lat: result.lat,
+
+      // Add any other necessary properties for your markers
+    },
+  ];
+
+  //log the markers
+  console.log("markers:", markers.value);
+};
 </script>
 
 <template>
-  <section class="px-8 dark:text-white" v-if="authStore.isLoggedIn">
+  <section class="px-8 dark-text-white" v-if="authStore.isLoggedIn">
+    <Button @click="authStore.logout" text="logout" :icon="LogOut" />
     <h1 v-if="vehicles" class="text-2xl font-medium mb-4">
       There are
-      <span class="text-indigo-500 dark:text-indigo-300"
+      <span class="text-indigo-500 dark-text-indigo-300"
         >{{
           vehicles.filter(
             (vehicle) => vehicle.vehicleStatus === VehicleStatus.AVAILABLE
@@ -102,29 +137,35 @@ watch(vehicles, (newVehicles) => {
         vehicle(s) </span
       >around your area.
     </h1>
+    <h1>search map</h1>
+
     <div class="flex flex-col gap-4">
-      <div class="w-full">
-        <MapView
-          class="w-full h-64 md:h-auto lg:h-[500px]"
+      <div class="w-full mx-auto">
+        <MapboxSearch @search-result="handleSearchResult" />
+        <!-- <MapView
+          class="w-full h-64 md-h-auto lg-h-500px"
           :markers="
-            vehicles.filter(
-              (vehicle) => vehicle.vehicleStatus === VehicleStatus.AVAILABLE
-            )
+            markers.map((marker) => ({
+              lng: marker.lng,
+              lat: marker.lat,
+            }))
           "
-        />
+        /> -->
       </div>
-      <div class="w-full md:hidden block">
-        <div class="grid grid-cols-3 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div class="w-full md-hidden block">
+        <div class="grid grid-cols-3 gap-4 md-grid-cols-2 lg-grid-cols-4">
           <VehicleCard
-            v-for="(vehicle, i) in vehicles"
+            v-for="(vehicle, i) in vehicles.filter(
+              (vehicle) => vehicle.vehicleStatus === VehicleStatus.AVAILABLE
+            )"
             :key="i"
             :vehicle="vehicle"
           />
         </div>
       </div>
 
-      <div class="w-full m-auto hidden md:block">
-        <h1 class="text-md mb-2 font-medium text-gray-700 dark:text-gray-300">
+      <div class="w-full m-auto hidden md-block">
+        <h1 class="text-md mb-2 font-medium text-gray-700 dark-text-gray-300">
           Available Vehicles
         </h1>
         <div class="overflow-x-auto whitespace-nowrap">

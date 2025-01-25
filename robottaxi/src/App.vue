@@ -16,4 +16,3 @@ import AppNavbar from "./components/generic/AppNavbar.vue";
     </div>
   </div>
 </template>
-

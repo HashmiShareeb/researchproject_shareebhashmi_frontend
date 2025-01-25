@@ -8,21 +8,24 @@ const useAuth = () => {
 
   const register = async (
     username: string,
-    password: string,
     email: string,
+    password: string,
     roles: string[]
   ) => {
     error.value = null;
     try {
-      const response = await postData("/api/auth/register", {
+      const response = await postData("/auth/register", {
         username,
+        email, // ✅ Correct order
         password,
-        email,
         roles,
       });
+
       return response; // Registration successful
     } catch (err: any) {
-      error.value = err.response?.data?.message || "Registration failed.";
+      error.value =
+        err.response?.data?.message || "Registration failed. " + err.message;
+      console.error("Registration error:", err.response?.data || err.message);
     }
   };
 

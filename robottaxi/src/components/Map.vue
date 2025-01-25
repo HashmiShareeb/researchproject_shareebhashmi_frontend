@@ -30,7 +30,7 @@ onMounted(() => {
   const map = new mapboxgl.Map({
     container: mapContainer.value,
     style: "mapbox://styles/mapbox/streets-v11",
-    center: [ride.value.location.longitude, ride.value.location.latitude], // Center on ride location
+    center: [48.418878483840466, 4.041876460310576], // Center on ride location
     zoom: 12,
   });
 

@@ -59,10 +59,6 @@ onMounted(() => {
         {{ $route.name }}
       </h1>
     </div>
-    <div v-else>
-      Please log in to access your dashboard.
-      <RouterLink to="/login">Login</RouterLink>
-    </div>
     <Button
       :icon="isDarkMode ? SunIcon : MoonIcon"
       @click="isDarkMode = !isDarkMode"

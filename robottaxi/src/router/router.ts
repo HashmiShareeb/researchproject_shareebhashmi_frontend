@@ -40,21 +40,25 @@ const routes: RouteRecordRaw[] = [
     path: "/admin",
     name: "Admin",
     component: AdminView,
+    meta: { requiresAuth: true, requiresAdmin: true }, // ✅ Admin-only
   },
   {
     path: "/admin/vehicles", // ✅ Correct: Relative path ("/admin/vehicles")
     name: "Vehicle List",
     component: VehicleList,
+    meta: { requiresAuth: true, requiresAdmin: true }, // ✅ Admin-only
   },
   {
     path: "/admin/vehicles/edit/:id", // ✅ Correct: Relative path ("/admin/vehicles/edit/:id")
     name: "Edit Vehicle",
     component: () => import("../views/vehicle/VehicleEdit.vue"),
+    meta: { requiresAuth: true, requiresAdmin: true }, // ✅ Admin-only
   },
   {
     path: "/admin/vehicles/add", // ✅ Correct: Relative path ("/admin/vehicles/add")
     name: "Add Vehicle",
     component: () => import("../views/vehicle/VehicleAdd.vue"),
+    meta: { requiresAuth: true, requiresAdmin: true }, // ✅ Admin-only
   },
 ];
 
