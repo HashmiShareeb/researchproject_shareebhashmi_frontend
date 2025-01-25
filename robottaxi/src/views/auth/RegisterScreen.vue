@@ -87,7 +87,7 @@ onMounted(() => {
       {{ error }}
     </div>
     <router-link
-      to="/register"
+      to="/login"
       class="block mt-4 text-indigo-500 dark:text-indigo-400 w-full text-center"
       >already have an account?
       <span class="underline">login in</span></router-link

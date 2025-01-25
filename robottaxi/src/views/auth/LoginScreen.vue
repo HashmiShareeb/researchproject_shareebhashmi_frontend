@@ -44,7 +44,6 @@ onMounted(() => {
 
 <template>
   <div class="auth-container" v-if="!isLoggedIn">
-    <h2>Login</h2>
     <form @submit.prevent="handleLogin">
       <div class="mb-4">
         <input
@@ -71,7 +70,8 @@ onMounted(() => {
     <router-link
       to="/register"
       class="block mt-4 text-indigo-500 dark:text-indigo-400 w-full text-center"
-      >Don't have an account? Register</router-link
+      >Don't have an account?
+      <span class="underline">Register</span></router-link
     >
   </div>
   <div class="container" v-else>

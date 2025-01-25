@@ -1,9 +1,11 @@
 import { ref } from "vue";
 import useAxios from "./useAxios";
 
+import type { User } from "../interface/user.interface";
+
 const useAuth = () => {
   const { postData } = useAxios();
-  const user = ref(null);
+  const user = ref<User | null>(null);
   const error = ref<string | null>(null);
 
   const register = async (
@@ -16,11 +18,14 @@ const useAuth = () => {
     try {
       const response = await postData("/auth/register", {
         username,
-        email, // ✅ Correct order
+        email,
         password,
         roles,
       });
 
+      if (response) {
+        localStorage.setItem("user", JSON.stringify(response)); // ✅ Store user properly
+      }
       return response; // Registration successful
     } catch (err: any) {
       error.value =
@@ -32,7 +37,10 @@ const useAuth = () => {
   const login = async (username: string, password: string) => {
     try {
       const response = await postData("/auth/login", { username, password });
-      localStorage.setItem("user", JSON.stringify(response));
+
+      if (response) {
+        localStorage.setItem("user", JSON.stringify(response)); // ✅ Store user properly
+      }
       return response;
     } catch (err: any) {
       console.error("Login failed:", err.response?.data || err.message);

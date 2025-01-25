@@ -8,14 +8,20 @@ import {
   CarFront,
   User,
 } from "lucide-vue-next";
-import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { computed, onMounted, ref } from "vue";
+import { RouterLink, useRoute } from "vue-router";
+import { useAuthStore } from "../../store/authStore";
 
 const isCollapsed = ref(false);
 
 const togglePanel = () => {
   isCollapsed.value = !isCollapsed.value;
 };
+
+const authStore = useAuthStore();
+authStore.loadLoginState();
+
+const isAdminRoute = computed(() => useRoute().name === "Admin");
 </script>
 
 <template>
@@ -28,6 +34,7 @@ const togglePanel = () => {
     <div class="flex items-center justify-between mb-4">
       <h1 v-if="!isCollapsed" class="text-2xl font-bold">
         MCT Project
+        <span>{{ authStore.user?.roles }}</span>
         <h2 class="" v-if="$route.name === 'Admin'">
           <span class="text-xl font-mono">Admin</span>
         </h2>

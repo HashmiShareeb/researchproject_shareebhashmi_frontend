@@ -1,9 +1,11 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { Role, type User } from "../interface/user.interface"; // Ensure this includes `roles`
 
 export const useAuthStore = defineStore("auth", () => {
-  const user = ref<{ username: string; email: string } | null>(null);
+  // ✅ Store full user details, including `roles`
+  const user = ref<User | null>(null);
   const isLoggedIn = ref(false);
   const router = useRouter();
 
@@ -13,8 +15,9 @@ export const useAuthStore = defineStore("auth", () => {
     const storedLoginState = localStorage.getItem("isLoggedIn");
 
     if (storedLoginState === "true" && storedUser) {
-      user.value = JSON.parse(storedUser);
+      user.value = JSON.parse(storedUser) as User;
       isLoggedIn.value = true;
+      console.log("Loaded user from localStorage:", user.value);
     } else {
       user.value = null;
       isLoggedIn.value = false;
@@ -24,19 +27,22 @@ export const useAuthStore = defineStore("auth", () => {
   // ✅ Login function
   const login = async (username: string, password: string) => {
     try {
-      const response = await fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+      const response = await fetch(
+        import.meta.env.VITE_BASE_URL + "/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        }
+      );
 
       if (!response.ok) throw new Error("Invalid credentials");
 
       const data = await response.json();
-      user.value = { username: data.username, email: data.email };
+      user.value = data as User; // ✅ Store full user object with `roles`
       isLoggedIn.value = true;
 
-      // Store session in localStorage
+      // ✅ Store session in localStorage
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("user", JSON.stringify(user.value));
 
@@ -51,12 +57,16 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
     isLoggedIn.value = false;
 
-    // Clear session storage 
+    // ✅ Clear session storage
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("user");
 
     router.push("/login");
   };
+
+  // ✅ Getter to check if the user is an admin
+  const isAdmin = computed(() => user.value?.roles?.includes(Role.ADMIN) ?? false);
+
 
   return {
     user,
@@ -64,5 +74,6 @@ export const useAuthStore = defineStore("auth", () => {
     loadLoginState,
     login,
     logout,
+    isAdmin,
   };
 });

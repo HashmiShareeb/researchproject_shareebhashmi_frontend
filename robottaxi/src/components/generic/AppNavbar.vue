@@ -59,6 +59,11 @@ onMounted(() => {
         {{ $route.name }}
       </h1>
     </div>
+    <div v-else>
+      <h1 class="text-3xl font-bold">
+        {{ $route.name }}
+      </h1>
+    </div>
     <Button
       :icon="isDarkMode ? SunIcon : MoonIcon"
       @click="isDarkMode = !isDarkMode"
