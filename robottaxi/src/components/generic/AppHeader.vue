@@ -114,13 +114,14 @@ if (storedLoginState === "true") {
         </div>
       </div>
 
-      <Button
-        class="mt-8"
-        v-if="isLoggedIn"
-        @click="authStore.logout"
-        :text="!isCollapsed ? 'Logout' : ''"
-        :icon="LogOut"
-      />
+      <div v-if="isLoggedIn" class="flex justify-center mt-4">
+        <Button
+          :class="[!isCollapsed ? 'p-0' : 'text-red-500']"
+          @click="authStore.logout"
+          :text="!isCollapsed ? 'Logout' : ''"
+          :icon="LogOut"
+        />
+      </div>
     </div>
 
     <div class="absolute bottom-5" v-if="!isCollapsed">
