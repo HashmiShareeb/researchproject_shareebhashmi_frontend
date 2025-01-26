@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Recipe, Vehicle } from "../interface/api.interface";
+import type { Recipe, Vehicle } from "../../interface/api.interface";
 import { Eye, Pen } from "lucide-vue-next";
-import Button from "./generic/Button.vue";
+import Button from "../generic/Button.vue";
 import {
   LucideBatteryFull,
   LucideBatteryLow,
@@ -9,7 +9,7 @@ import {
   LucideBatteryCharging,
 } from "lucide-vue-next";
 
-import { VehicleStatus } from "../interface/api.interface";
+import { VehicleStatus } from "../../interface/api.interface";
 
 import { useRouter } from "vue-router";
 
@@ -114,7 +114,7 @@ const viewDetails = (vehicleId: string) => {
           class="ml-auto mt-2"
           @click="
             router.push({
-              name: 'VehicleDetail',
+              name: 'Vehicle Detail',
               params: { id: vehicle.vehicleId },
             })
           "

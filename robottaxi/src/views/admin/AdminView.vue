@@ -39,9 +39,7 @@
           <option value="OUT_OF_SERVICE">Inactive</option>
         </select>
 
-        <div
-          class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 overflow-x-auto gap-4"
-        >
+        <div class="w-full">
           <template v-if="vehicles.length === 0">
             <div v-for="n in 3" :key="n" class="animate-pulse flex space-x-4">
               <div
@@ -49,7 +47,21 @@
               ></div>
             </div>
           </template>
-          <VehicleCard
+          <div class="w-full m-auto">
+            <div class="overflow-x-auto whitespace-nowrap">
+              <VehicleCard
+                v-for="(vehicle, i) in selectedStatus
+                  ? vehicles.filter(
+                      (vehicle) => vehicle.vehicleStatus === selectedStatus
+                    )
+                  : vehicles"
+                :key="i"
+                :vehicle="vehicle"
+                class="inline-block p-2"
+              />
+            </div>
+          </div>
+          <!-- <VehicleCard
             v-else
             v-for="(vehicle, i) in selectedStatus
               ? vehicles.filter(
@@ -58,18 +70,9 @@
               : vehicles"
             :key="i"
             :vehicle="vehicle"
-          />
+            class="w-full"
+          /> -->
         </div>
-        <!-- <div class="w-full m-auto hidden md:block">
-            <div class="overflow-x-auto whitespace-nowrap">
-              <VehicleCard
-                v-for="(vehicle, i) in vehicles"
-                :key="i"
-                :vehicle="vehicle"
-                class="inline-block p-2"
-              />
-            </div>
-          </div> -->
       </div>
 
       <div class="lg:col-span-1">
@@ -95,16 +98,15 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from "vue";
 import useAxios from "../../composables/useAxios";
-import VehicleCard from "../../components/VehicleCard.vue";
+import VehicleCard from "../../components/vehicles/VehicleCard.vue";
 import type { ActiveRide, Vehicle } from "../../interface/api.interface";
+import UserList from "../../components/users/UserList.vue";
 
 const { getData } = useAxios();
 const vehicles = ref<Vehicle[]>([]);
 
 import { VehicleStatus } from "../../interface/api.interface";
 import { Car, CarTaxiFrontIcon, Wrench } from "lucide-vue-next";
-
-import UserList from "../../components/users/UserList.vue";
 
 const activeVehicles = computed(() =>
   vehicles.value.filter(
@@ -136,14 +138,21 @@ const stats = computed(() => [
     label: "Active Vehicles",
     value: activeVehicles.value.length,
     icon: Car,
-    bgColor: "bg-green-100 dark:bg-green-800",
+    bgColor: "bg-green-100 dark:bg-green-900",
     iconColor: "text-green-500 dark:text-green-400",
   },
   {
     label: "In Maintenance",
     value: underMaintananceVehicles.value.length,
     icon: Wrench,
-    bgColor: "bg-red-100 dark:bg-red-800",
+    bgColor: "bg-orange-100 dark:bg-orange-900",
+    iconColor: "text-orange-500 dark:text-orange-400",
+  },
+  {
+    label: "Inactive Vehicles",
+    value: inactiveVehicles.value.length,
+    icon: Car,
+    bgColor: "bg-red-100 dark:bg-red-900",
     iconColor: "text-red-500 dark:text-red-400",
   },
 ]);

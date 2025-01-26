@@ -55,10 +55,9 @@ if (storedLoginState === "true") {
   >
     <div class="flex items-center justify-between mb-4">
       <h1 v-if="!isCollapsed" class="text-2xl font-bold">
-        MCT Project
-        <span>{{ authStore.user?.roles }}</span>
+        Smart Wheels
         <h2 class="" v-if="$route.name === 'Admin'">
-          <span class="text-xl font-mono">Admin</span>
+          <span class="text-sm">Admin</span>
         </h2>
       </h1>
 
@@ -73,26 +72,6 @@ if (storedLoginState === "true") {
     </div>
 
     <ul class="space-y-8 pt-6 cursor-pointer mx-auto">
-      <li :class="{ 'text-white font-bold': $route.name === 'Home' }">
-        <RouterLink :to="{ name: 'Home' }">
-          <span class="inline-flex gap-4">
-            <Home
-              :class="{ 'fill-current text-white': $route.name === 'Home' }"
-            />
-            <span v-if="!isCollapsed">Home</span>
-          </span>
-        </RouterLink>
-      </li>
-      <li>
-        <RouterLink :to="{ name: 'Map' }">
-          <span class="inline-flex gap-4">
-            <Earth
-              :class="{ 'fill-current text-white': $route.name === 'Map' }"
-            />
-            <span v-if="!isCollapsed">Map Overview</span>
-          </span>
-        </RouterLink>
-      </li>
       <li>
         <RouterLink :to="{ name: 'Admin' }">
           <span class="inline-flex gap-4">
@@ -131,9 +110,6 @@ if (storedLoginState === "true") {
         <div v-if="isLoggedIn">
           <p v-if="!isCollapsed" class="text-md font-semibold capitalize">
             {{ username }}
-          </p>
-          <p v-if="!isCollapsed" class="text-xs">
-            <span class="text-green-500 font-bold capitalize"> USER </span>
           </p>
         </div>
       </div>

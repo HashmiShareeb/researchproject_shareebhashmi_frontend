@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from "vue";
 import type { Vehicle } from "../interface/api.interface";
 import useAxios from "../composables/useAxios";
-import VehicleCard from "../components/VehicleCard.vue";
+import VehicleCard from "../components/vehicles/VehicleCard.vue";
 import type { User } from "../interface/user.interface";
 import { VehicleStatus } from "../interface/api.interface";
 import { useAuthStore } from "../store/authStore";

@@ -22,7 +22,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: "/vehicles/:id",
-    name: "VehicleDetail",
+    name: "Vehicle Detail",
     component: () => import("../views/vehicle/_slug.vue"),
   },
   {
@@ -40,7 +40,7 @@ const routes: RouteRecordRaw[] = [
     path: "/admin",
     name: "Admin",
     component: AdminView,
-    meta: { requiresAuth: true, requiresAdmin: true }, // Ensure this meta is set
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
     path: "/admin/vehicles", // ✅ Correct: Relative path ("/admin/vehicles")
