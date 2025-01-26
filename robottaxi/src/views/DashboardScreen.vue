@@ -4,185 +4,171 @@ import type { Vehicle } from "../interface/api.interface";
 import useAxios from "../composables/useAxios";
 import VehicleCard from "../components/VehicleCard.vue";
 import type { User } from "../interface/user.interface";
-
 import { VehicleStatus } from "../interface/api.interface";
 import { useAuthStore } from "../store/authStore";
 import { useRouter } from "vue-router";
 import Button from "../components/generic/Button.vue";
+import MapboxSearch from "../components/MapGeocoder.vue";
 
-// Define the CORS proxy URL
-//const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
-// import MapView from "../components/Map.vue";
-import MapboxSearch from "../components/MapboxSearch.vue";
-import { icons, LogOut } from "lucide-vue-next";
+// API Utility
+const { getData, postData } = useAxios();
 
-// const CORS_ALLOWED_ORIGINS = ["http://localhost:5173"];
-const { getData } = useAxios();
-
-// Define the username
-
+// State
 const vehicles = ref<Vehicle[]>([]);
 const user = ref<User | null>(null);
 const router = useRouter();
 const authStore = useAuthStore();
+const rides = ref<any[]>([]);
+const selectedVehicle = ref<Vehicle | null>(null);
+const selectedLocation = ref<{
+  latitude: number;
+  longitude: number;
+  address: string;
+} | null>(null);
 
-// const username = ref("");
-// const email = ref("");
-
-// const fetchedUser = async () => {
-//   try {
-//     const storedUser = localStorage.getItem("user");
-//     if (storedUser) {
-//       user.value = JSON.parse(storedUser);
-//     } else {
-//       user.value = await getData("/api/auth/user"); // Adjust if needed
-//       localStorage.setItem("user", JSON.stringify(user.value));
-//     }
-//   } catch (error) {
-//     console.error("Failed to fetch user:", error);
-//   }
-// };
-
+// Fetch Vehicles
 onMounted(async () => {
   try {
-    vehicles.value = await getData("/vehicles"); // Adjusted endpoint
-    console.log("api :", vehicles.value);
+    vehicles.value = await getData("/vehicles");
+    console.log("Vehicles:", vehicles.value);
   } catch (error) {
-    console.error("Failed to fetch api :", error);
+    console.error("Failed to fetch vehicles:", error);
   }
 });
 
+// Fetch User Info
 onMounted(() => {
-  authStore.loadLoginState(); // Load the login state
-
-  if (!authStore.isLoggedIn) {
-    router.push("/login"); // Redirect to login if not logged in
-  }
+  authStore.loadLoginState();
+  if (!authStore.isLoggedIn) router.push("/login");
 
   const storedUser = localStorage.getItem("user");
   if (storedUser) {
     user.value = JSON.parse(storedUser);
-    console.log("User info loaded:", user.value);
+
+    console.log("User info:", user.value);
   } else {
     router.push("/login");
   }
 });
 
-// Define the reactive value to track if the user is logged in
-// const isLoggedIn = ref(false);
-
-// const storedLoginState = localStorage.getItem("isLoggedIn");
-// if (storedLoginState === "true") {
-//   isLoggedIn.value = true;
-// }
-
-watch(vehicles, (newVehicles) => {
-  console.log("Vehicles:", newVehicles);
-
-  // Check if the vehicles array is empty
-  if (newVehicles.length === 0) {
-    console.log("No vehicles found");
-    return;
+// Fetch Existing Rides
+const fetchRides = async () => {
+  try {
+    const response = await getData("/api/rides");
+    rides.value = response;
+  } catch (error) {
+    console.error("Failed to fetch rides:", error);
   }
+};
 
-  // Check if the vehicles array contains any null values
-  if (newVehicles.some((vehicle) => vehicle === null)) {
-    console.error("Some vehicles are null");
-    return;
-  }
-});
+onMounted(fetchRides);
 
-// const accessToken =
-//   "pk.eyJ1Ijoic2hhc2htaSIsImEiOiJjbTRsb2dycjIwNGJnMmpzaGFoa2g0ZHN6In0.zbMpJI9ndXlMsxgCnmm00Q";
-// const options = ref({
-//   language: "en",
-//   country: "US",
-// });
-
-interface Marker {
-  lng: number;
-  lat: number;
-  // Add any other necessary properties for your markers
-}
-
-const markers = ref<Marker[]>([]);
+// Handle Mapbox Search Result
 const handleSearchResult = (result: any) => {
-  // Update the markers based on the search result
-  console.log("test hier:", result);
-  markers.value = [
-    {
-      lng: result.lng,
-      lat: result.lat,
+  selectedLocation.value = {
+    latitude: result.lat,
+    longitude: result.lng,
+    address: result.place_name,
+  };
+  console.log("Selected Location:", selectedLocation.value);
+};
 
-      // Add any other necessary properties for your markers
+// Request a Ride
+const requestRide = async () => {
+  if (!selectedVehicle.value || !selectedLocation.value || !user.value) {
+    console.error("Missing data:", {
+      selectedVehicle: selectedVehicle.value,
+      selectedLocation: selectedLocation.value,
+      user: user.value,
+    });
+    alert("Please select a vehicle, location, and ensure you are logged in.");
+    return;
+  }
+
+  const requestData = {
+    rideName: `Ride to ${selectedLocation.value.address}`,
+    rideStatus: "REQUESTED",
+    rideDescription: `Ride to ${selectedLocation.value.address}`,
+    ridePrice: 25.5,
+    location: selectedLocation.value,
+    user: {
+      userId: user.value.userId, // 🔥 Ensure this is being set
+      username: user.value.username,
+      email: user.value.email,
     },
-  ];
+  };
 
-  //log the markers
-  console.log("markers:", markers.value);
+  console.log("Sending Ride Request:", requestData);
+
+  try {
+    const response = await postData(
+      `/rides/request/${user.value.userId}/${selectedVehicle.value.vehicleId}`,
+      requestData
+    );
+    console.log("Ride requested successfully:", response);
+    alert("Ride request sent!" + JSON.stringify(response));
+  } catch (error) {
+    console.error("Error requesting ride:", error);
+    alert("Failed to request ride.");
+  }
 };
 </script>
 
 <template>
   <section class="px-8 dark-text-white" v-if="authStore.isLoggedIn">
-    <Button @click="authStore.logout" text="logout" :icon="LogOut" />
-    <h1 v-if="vehicles" class="text-2xl font-medium mb-4">
+    <h1 v-if="vehicles.length" class="text-2xl font-medium mb-4">
       There are
-      <span class="text-indigo-500 dark-text-indigo-300"
-        >{{
+      <span class="text-indigo-500 dark-text-indigo-300">
+        {{
           vehicles.filter(
             (vehicle) => vehicle.vehicleStatus === VehicleStatus.AVAILABLE
           ).length
         }}
-        vehicle(s) </span
-      >around your area.
+        vehicle(s)
+      </span>
+      available in your area.
     </h1>
-    <h1>search map</h1>
 
-    <div class="flex flex-col gap-4">
-      <div class="w-full mx-auto">
-        <MapboxSearch @search-result="handleSearchResult" />
-        <!-- <MapView
-          class="w-full h-64 md-h-auto lg-h-500px"
-          :markers="
-            markers.map((marker) => ({
-              lng: marker.lng,
-              lat: marker.lat,
-            }))
-          "
-        /> -->
-      </div>
-      <div class="w-full md-hidden block">
-        <div class="grid grid-cols-3 gap-4 md-grid-cols-2 lg-grid-cols-4">
-          <VehicleCard
-            v-for="(vehicle, i) in vehicles.filter(
-              (vehicle) => vehicle.vehicleStatus === VehicleStatus.AVAILABLE
-            )"
-            :key="i"
-            :vehicle="vehicle"
-          />
-        </div>
-      </div>
+    <h1>Search for a destination:</h1>
+    <MapboxSearch
+      @search-result="handleSearchResult"
+      :markers="
+        rides.map((ride) => ({
+          lat: ride.location.latitude,
+          lng: ride.location.longitude,
+        }))
+      "
+    />
 
-      <div class="w-full m-auto hidden md-block">
-        <h1 class="text-md mb-2 font-medium text-gray-700 dark-text-gray-300">
-          Available Vehicles
-        </h1>
-        <div class="overflow-x-auto whitespace-nowrap">
-          <VehicleCard
-            v-for="(vehicle, i) in vehicles.filter(
-              (vehicle) => vehicle.vehicleStatus === VehicleStatus.AVAILABLE
-            )"
-            :key="i"
-            :vehicle="vehicle"
-            class="inline-block p-2"
-          />
-        </div>
+    <div class="w-full my-4">
+      <h2 class="text-lg font-semibold">Available Vehicles:</h2>
+      <div class="grid grid-cols-3 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <VehicleCard
+          v-for="(vehicle, i) in vehicles.filter(
+            (v) => v.vehicleStatus === VehicleStatus.AVAILABLE
+          )"
+          :key="i"
+          :vehicle="vehicle"
+          @click="selectedVehicle = vehicle"
+          :class="{
+            'border-2 border-indigo-500':
+              selectedVehicle?.vehicleId === vehicle.vehicleId,
+          }"
+        />
       </div>
     </div>
+
+    <Button
+      v-if="selectedVehicle && selectedLocation"
+      @click="requestRide"
+      text="Request Ride"
+    />
   </section>
+
   <section v-else>
     <p>Please log in to access your dashboard.</p>
-    <RouterLink to="/login">Login</RouterLink>
+    <RouterLink to="/login">
+      <Button text="Login" />
+    </RouterLink>
   </section>
 </template>

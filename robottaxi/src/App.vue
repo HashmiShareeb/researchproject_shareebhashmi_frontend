@@ -4,14 +4,15 @@ import AppNavbar from "./components/generic/AppNavbar.vue";
 </script>
 
 <template>
-  <div class="dark:bg-black flex bg-white min-h-screen dark:text-white">
-    <AppHeader />
-    <!-- Main content -->
-    <div class="w-full max-w-screen-2xl mx-auto">
-      <AppNavbar />
-      <div class="flex-grow px-4 py-8">
+  <div class="flex h-screen bg-white dark:bg-black dark:text-white">
+    <!-- Sidebar (Fixed) -->
+    <AppHeader class="h-screen fixed top-0 left-0 z-10" />
+
+    <!-- Main Content (Pushes itself right, preventing overlap) -->
+    <div class="flex flex-col flex-grow w-full">
+      <AppNavbar class="z-20" />
+      <div class="flex-grow overflow-auto px-4 py-8">
         <RouterView />
-        <!-- Displays the current route's component -->
       </div>
     </div>
   </div>

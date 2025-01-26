@@ -5,6 +5,13 @@ export enum VehicleStatus {
   OUT_OF_SERVICE = "OUT_OF_SERVICE",
 }
 
+export enum RideStatus {
+  REQUESTED,
+  IN_PROGRESS,
+  COMPLETED,
+  CANCELLED,
+}
+
 export interface Vehicle {
   vehicleId: string;
   manufacturer: string;

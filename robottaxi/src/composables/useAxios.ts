@@ -14,7 +14,7 @@ const useAxios = () => {
       return response.data;
     } catch (error) {
       console.error("Error fetching data:", error);
-      throw error;
+      throw new Error("Request failed"); // Prevent infinite recursion
     }
   };
 
@@ -24,10 +24,9 @@ const useAxios = () => {
       return response.data;
     } catch (error) {
       console.error("Error posting data:", error);
-      throw error;
+      throw new Error("Request failed"); // Prevent infinite recursion
     }
   };
-
 
   const putData = async (endpoint: string, data: any) => {
     try {
@@ -35,7 +34,7 @@ const useAxios = () => {
       return response.data;
     } catch (error) {
       console.error("Error updating data:", error);
-      throw error;
+      throw new Error("Request failed"); // Prevent infinite recursion
     }
   };
 
@@ -45,11 +44,9 @@ const useAxios = () => {
       return response.data;
     } catch (error) {
       console.error("Error deleting data:", error);
-      throw error;
+      throw new Error("Request failed"); // Prevent infinite recursion
     }
   };
-
-  
 
   return { getData, postData, putData, deleteData };
 };

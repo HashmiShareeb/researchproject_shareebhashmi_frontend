@@ -7,10 +7,14 @@ import {
   PanelRightClose,
   CarFront,
   User,
+  Shield,
+  LogOut,
 } from "lucide-vue-next";
 import { computed, onMounted, ref } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { useAuthStore } from "../../store/authStore";
+
+import Button from "./Button.vue";
 
 const isCollapsed = ref(false);
 
@@ -21,7 +25,25 @@ const togglePanel = () => {
 const authStore = useAuthStore();
 authStore.loadLoginState();
 
+const username = ref("");
 const isAdminRoute = computed(() => useRoute().name === "Admin");
+
+const isLoggedIn = ref(false);
+//pinia login hier
+const storedLoginState = localStorage.getItem("isLoggedIn");
+if (storedLoginState === "true") {
+  isLoggedIn.value = true;
+
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser);
+      username.value = user.username ?? "Guest";
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+    }
+  }
+}
 </script>
 
 <template>
@@ -72,6 +94,16 @@ const isAdminRoute = computed(() => useRoute().name === "Admin");
         </RouterLink>
       </li>
       <li>
+        <RouterLink :to="{ name: 'Admin' }">
+          <span class="inline-flex gap-4">
+            <Shield
+              :class="{ 'fill-current text-white': $route.name === 'Admin' }"
+            />
+            <span v-if="!isCollapsed">Admin</span>
+          </span>
+        </RouterLink>
+      </li>
+      <li>
         <RouterLink :to="{ name: 'Vehicle List' }">
           <span class="inline-flex gap-4">
             <CarFront
@@ -83,57 +115,42 @@ const isAdminRoute = computed(() => useRoute().name === "Admin");
           </span>
         </RouterLink>
       </li>
-      <li>
-        <span class="inline-flex gap-4">
-          <Bolt
-            :class="{ 'fill-current text-white': $route.name === 'Settings' }"
-          />
-          <span v-if="!isCollapsed">Settings</span>
-        </span>
-      </li>
-      <li>
-        <RouterLink :to="{ name: 'Admin' }">
-          <span class="inline-flex gap-4">
-            <User
-              :class="{ 'fill-current text-white': $route.name === 'Admin' }"
-            />
-            <span v-if="!isCollapsed">Admin</span>
-          </span>
-        </RouterLink>
-      </li>
     </ul>
     <!-- account details -->
-    <div
-      :class="[
-        !isCollapsed
-          ? 'absolute bottom-16'
-          : 'absolute bottom-16 right-0 left-0 w-10 h-10 mx-auto bg-white rounded-full',
-      ]"
-    >
-      <button
-        @click="
-          () => {
-            $router.push({ name: 'Account' });
-          }
-        "
+    <div :class="[!isCollapsed, 'absolute bottom-16']">
+      <div
         class="flex items-center justify-center space-x-2 mt-2 focus:outline-none"
         aria-label="User Account"
       >
         <div
-          v-if="!isCollapsed"
-          class="w-12 h-12 mr-4 rounded-full bg-white"
-        ></div>
-        <div>
-          <p v-if="!isCollapsed" class="text-md font-semibold capitalize">SH</p>
+          v-if="!isCollapsed && isLoggedIn"
+          class="w-12 h-12 mr-4 rounded-full bg-white dark:bg-neutral-800 dark:text-white flex items-center justify-center text-black font-bold"
+        >
+          {{ username.charAt(0).toUpperCase() }}
+        </div>
+        <div v-if="isLoggedIn">
+          <p v-if="!isCollapsed" class="text-md font-semibold capitalize">
+            {{ username }}
+          </p>
           <p v-if="!isCollapsed" class="text-xs">
-            <span class="text-green-500 font-mono capitalize">user</span>
+            <span class="text-green-500 font-bold capitalize"> USER </span>
           </p>
         </div>
-      </button>
+      </div>
+
+      <Button
+        class="mt-8"
+        v-if="isLoggedIn"
+        @click="authStore.logout"
+        :text="!isCollapsed ? 'Logout' : ''"
+        :icon="LogOut"
+      />
     </div>
 
-    <div class="absolute bottom-5 text-center" v-if="!isCollapsed">
-      <p class="text-xs">© {{ new Date().getFullYear() }} MCT project by SH</p>
+    <div class="absolute bottom-5" v-if="!isCollapsed">
+      <p class="text-xs">
+        © {{ new Date().getFullYear() }} MCT project by Shareeb Hashmi
+      </p>
     </div>
   </div>
 </template>
